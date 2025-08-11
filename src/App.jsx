@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -13,7 +13,7 @@ import AdminPanel from "./pages/admin/AdminPanel";
 
 function App() {
   return (
-    <Router basename="/team1-taskboard">
+    <Router>
       <Routes>
         <Route
           index
