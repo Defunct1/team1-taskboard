@@ -1,52 +1,64 @@
+// ProtectedRoute.jsx
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/config";
 
 export default function ProtectedRoute({ children, role = null }) {
   const [user, setUser] = useState(undefined);
-  const [hasAccess, setHasAccess] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState(undefined); // для role-redirect
+  const [roleAllowed, setRoleAllowed] = useState(undefined);
+  const location = useLocation();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      if (!u) {
         setUser(null);
+        setRoleAllowed(undefined);
         return;
       }
 
-      await user.reload();
+      try {
+        await u.reload();
+      } catch (_) {}
 
-      if (!user.emailVerified) {
+      if (!u.emailVerified) {
         setUser("unverified");
+        setRoleAllowed(undefined);
         return;
       }
 
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      const userData = userDoc.data();
+      setUser(u);
 
-      setUser(user);
+      if (!role) {
+        setRoleAllowed(true);
+        return;
+      }
 
-      // 🔐 Перевірка ролі
-      if (!role || userData?.role === role) {
-        setHasAccess(true);
-        setIsAuthorized(true);
-      } else {
-        setHasAccess(false);
-        setIsAuthorized(false);
+      try {
+        const snap = await getDoc(doc(db, "users", u.uid));
+        const data = snap.data();
+        setRoleAllowed(data?.role === role);
+      } catch {
+        setRoleAllowed(false);
       }
     });
 
     return unsub;
   }, [role]);
 
-  if (user === undefined || isAuthorized === undefined)
-    return <p>Завантаження...</p>;
+  if (user === undefined) return <p>Завантаження...</p>;
+
+  if (user === null)
+    return <Navigate to="/auth" replace state={{ from: location }} />;
+
   if (user === "unverified")
     return <p>Будь ласка, підтвердіть email перед доступом.</p>;
-  if (!user) return <Navigate to="/auth" />;
-  if (!hasAccess && role) return <Navigate to="/dashboard" />;
+
+  if (role && roleAllowed === undefined) return <p>Завантаження...</p>;
+
+  if (role && roleAllowed === false)
+    return <Navigate to="/dashboard" replace />;
 
   return children;
 }
