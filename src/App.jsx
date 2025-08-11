@@ -9,7 +9,7 @@ import AdminPanel from "./pages/admin/AdminPanel";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/team1-taskboard">
       <Routes>
         <Route
           path="/auth"
