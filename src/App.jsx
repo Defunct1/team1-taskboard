@@ -25,7 +25,7 @@ function App() {
         />
 
         <Route
-          path="auth"
+          path="/auth"
           element={
             <PublicRoute>
               <Auth />
@@ -33,7 +33,7 @@ function App() {
           }
         />
         <Route
-          path="dashboard"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
@@ -41,7 +41,7 @@ function App() {
           }
         />
         <Route
-          path="admin"
+          path="/admin"
           element={
             <ProtectedRoute role="admin">
               <AdminPanel />
