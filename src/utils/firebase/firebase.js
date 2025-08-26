@@ -1,31 +1,32 @@
+// src/utils/firebase/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Конфігурація для автентифікації (taskboard-1dc41)
+// Конфігурація для автентифікації
 const authConfig = {
-  apiKey: "AIzaSyAGL19lzx4yazD6MlZGnqaAbqvCS5PZHAE",
-  authDomain: "taskboard-1dc41.firebaseapp.com",
-  projectId: "taskboard-1dc41",
-  storageBucket: "taskboard-1dc41.firebasestorage.app",
-  messagingSenderId: "803801454650",
-  appId: "1:803801454650:web:a9585395b984a0f7a3fd03",
+  apiKey: process.env.REACT_APP_FIREBASE_AUTH_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_AUTH_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_AUTH_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_AUTH_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_AUTH_APP_ID,
 };
 
-// Конфігурація для даних завдань (cardandsqaure)
+// Конфігурація для бази даних завдань
 const tasksConfig = {
-  apiKey: "AIzaSyDmut_9cU45O4_vyh2hXxrqFmRskNTSMr4",
-  authDomain: "cardandsqaure.firebaseapp.com",
-  projectId: "cardandsqaure",
-  storageBucket: "cardandsqaure.firebasestorage.app",
-  messagingSenderId: "84251171649",
-  appId: "1:84251171649:web:3397c782d0e10eae13dfc0",
+  apiKey: process.env.REACT_APP_FIREBASE_TASKS_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_TASKS_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_TASKS_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_TASKS_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_TASKS_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_TASKS_APP_ID,
 };
 
-// Ініціалізація першого додатку (для автентифікації)
+// Ініціалізація першого додатку (автентифікація)
 const authApp = initializeApp(authConfig, "authApp");
 export const auth = getAuth(authApp);
 
-// Ініціалізація другого додатку (для завдань)
+// Ініціалізація другого додатку (завдання)
 const tasksApp = initializeApp(tasksConfig, "tasksApp");
-export const db = getFirestore(tasksApp); // База даних для карток завдань
+export const db = getFirestore(tasksApp);
