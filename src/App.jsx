@@ -6,17 +6,20 @@ import {
   Navigate,
 } from "react-router-dom";
 import Auth from "./pages/auth/Auth";
-import Dashboard from "./pages/dashboard/Dashboard";
+import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import PublicRoute from "./utils/routes/PublicRoute";
 import ProtectedRoute from "./utils/routes/ProtectedRoute";
 import AdminPanel from "./pages/admin/AdminPanel";
+import BoardPage from "./pages/dashboard/BoardPage";
+import AccountPage from "./pages/dashboard/AccountPage";
+import SupportPage from "./pages/dashboard/SupportPage";
 
 function App() {
   return (
     <Router basename="/team1-taskboard">
       <Routes>
         <Route
-          index
+          path="/"
           element={
             <ProtectedRoute>
               <Navigate to="/dashboard" replace />
@@ -25,23 +28,30 @@ function App() {
         />
 
         <Route
-          path="/auth"
+          path="/auth/*"
           element={
             <PublicRoute>
               <Auth />
             </PublicRoute>
           }
         />
+
         <Route
-          path="/dashboard"
+          path="/dashboard/*"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<h2>Головна панель</h2>} />
+          <Route path="board" element={<BoardPage />} />
+          <Route path="account" element={<AccountPage />} />
+          <Route path="support" element={<SupportPage />} />
+        </Route>
+
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <ProtectedRoute role="admin">
               <AdminPanel />

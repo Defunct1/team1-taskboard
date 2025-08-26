@@ -1,8 +1,14 @@
 {
   "compilerOptions": {
-    "checkJs": true,
+    "baseUrl": "src",
+    "checkJs": false,
     "jsx": "react-jsx",
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "@components/*": ["components/*"],
+      "utils/*": ["utils/*"],
+      "@services/*": ["services/*"]
+    }
   },
   "include": ["src"]
 }

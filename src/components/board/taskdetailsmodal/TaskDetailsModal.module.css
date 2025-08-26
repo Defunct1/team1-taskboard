@@ -1,0 +1,229 @@
+/* Забороняємо виділення і caret на всіх контейнерах */
+.modalContent,
+.section,
+.labelsContainer,
+.addLabelForm,
+.colorPicker,
+.moveWrapper,
+.actionButtons {
+  user-select: none;
+}
+
+/* --- Overlay модалки --- */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* тільки overlay */
+}
+
+/* --- Контент модалки --- */
+.modalContent {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+/* --- Анімація модалки --- */
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Кнопка закриття --- */
+.closeButton {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-secondary, #5e6c84);
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: var(--text-primary, #172b4d);
+}
+
+/* --- Тайтл завдання --- */
+.titleInput {
+  width: 100%;
+  min-height: 60px;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  resize: none;
+  user-select: text; /* дозволяємо текст тільки у textarea */
+}
+
+.titleInput:focus {
+  outline: none;
+  border-color: var(--primary-color, #0052cc);
+}
+
+/* --- Секції --- */
+.section { margin-bottom: 20px; }
+
+.section h3 {
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: var(--text-secondary, #c3cad6);
+}
+
+/* --- Мітки --- */
+.labelsContainer {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  position: relative;
+  z-index: 1; /* лише для вкладених елементів */
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: #f1f2f3;
+  transition: transform 0.2s;
+}
+
+.labelColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.labelText {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.removeLabel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #888;
+  margin-left: 4px;
+  user-select: none; /* забороняємо caret на кнопці */
+}
+
+.removeLabel:hover {
+  color: #e44d40;
+}
+
+/* --- Форма додавання мітки --- */
+.addLabelForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 1; /* лише для вкладених елементів */
+}
+
+.colorPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1; /* лише для вкладених елементів */
+}
+
+.colorOption {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.colorOption:hover {
+  transform: scale(1.1);
+}
+
+.colorOption.selected {
+  border-color: #000; /* чітка рамка для обраного кольору */
+}
+
+.labelInput {
+  padding: 6px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  user-select: text; /* дозволяємо caret */
+  position: relative;
+  z-index: 1; /* лише для вкладених елементів */
+}
+
+/* --- Dropdown переміщення --- */
+.moveWrapper {
+  position: relative;
+}
+
+.moveDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  z-index: 1010;
+  pointer-events: auto;
+  animation: fadeInDropdown 0.15s ease-out;
+}
+
+.moveDropdown button {
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none; /* забороняємо caret */
+}
+
+.moveDropdown button:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+/* --- Кнопки дій --- */
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.actions {
+  position: relative;
+  z-index: 1; /* лише для вкладених елементів */
+}
+
+@keyframes fadeInDropdown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

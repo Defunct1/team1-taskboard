@@ -1,9 +1,8 @@
-// ProtectedRoute.jsx
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/config";
+import { auth, db } from "../../utils/firebase/firebase"; // Виправлено шлях
 
 export default function ProtectedRoute({ children, role = null }) {
   const [user, setUser] = useState(undefined);
@@ -11,7 +10,9 @@ export default function ProtectedRoute({ children, role = null }) {
   const location = useLocation();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
+    let unsubscribe = () => {}; // Ініціалізація для уникнення помилок
+
+    const checkAuth = async (u) => {
       if (!u) {
         setUser(null);
         setRoleAllowed(undefined);
@@ -39,12 +40,15 @@ export default function ProtectedRoute({ children, role = null }) {
         const snap = await getDoc(doc(db, "users", u.uid));
         const data = snap.data();
         setRoleAllowed(data?.role === role);
-      } catch {
+      } catch (error) {
+        console.error("Помилка отримання ролі:", error);
         setRoleAllowed(false);
       }
-    });
+    };
 
-    return unsub;
+    unsubscribe = onAuthStateChanged(auth, checkAuth);
+
+    return () => unsubscribe();
   }, [role]);
 
   if (user === undefined) return <p>Завантаження...</p>;
@@ -58,7 +62,7 @@ export default function ProtectedRoute({ children, role = null }) {
   if (role && roleAllowed === undefined) return <p>Завантаження...</p>;
 
   if (role && roleAllowed === false)
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard" replace state={{ error: "Недостатньо прав" }} />;
 
   return children;
 }

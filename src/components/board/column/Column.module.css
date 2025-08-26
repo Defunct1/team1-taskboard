@@ -1,0 +1,123 @@
+/* --- Колонка --- */
+.column {
+  background: var(--column-bg, #f4f5f7);
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  min-width: 280px;
+  max-width: 320px;
+  box-sizing: border-box;
+  height: fit-content;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  user-select: none; /* прибирає виділення тексту при кліку на колонку */
+}
+
+/* --- Контейнер дошки --- */
+.board {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.board::-webkit-scrollbar {
+  height: 8px;
+}
+.board::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, #e1e4e8);
+}
+.board::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #c1c4c8);
+  border-radius: 4px;
+}
+
+/* --- Адаптивність --- */
+@media (max-width: 768px) {
+  .column { min-width: 240px; padding: 10px; }
+  .board { padding: 16px 12px; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .column { min-width: 85vw; }
+}
+
+/* --- Заголовок колонки --- */
+.title {
+  margin: 0;
+  color: var(--text-primary, #172b4d);
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none; /* прибирає карету при кліку на заголовок */
+}
+
+/* --- Список тасків --- */
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* --- Кнопка додати таск --- */
+.addButton {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* --- Форма додавання таску --- */
+.addForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textarea {
+  min-height: 60px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  resize: vertical;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: text; /* тільки для textarea */
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- Помилка --- */
+.error {
+  color: var(--error-color, #e74c3c);
+  font-size: 0.8rem;
+  margin: 8px 0;
+}
+
+/* --- Кнопка додати колонку --- */
+.addColumnBtn {
+  background-color: #4bce97;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.addColumnBtn:hover {
+  background-color: #3aa16c;
+}

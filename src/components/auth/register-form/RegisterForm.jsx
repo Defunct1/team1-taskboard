@@ -5,7 +5,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../../utils/firebase/config";
+import { auth, db } from "../../../utils/firebase/firebase";
 import { Form, Input, Button, Message } from "./RegisterForm.styles";
 
 export default function RegisterForm() {

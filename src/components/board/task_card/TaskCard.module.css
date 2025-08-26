@@ -1,0 +1,132 @@
+/* --- Карточка завдання --- */
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  border-left: 4px solid var(--button-bg);
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* --- Текст завдання --- */
+.text {
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.4;
+  user-select: none; /* забороняємо курсор тексту */
+}
+
+/* --- Контейнери для кнопок --- */
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  position: relative;
+}
+
+/* --- Кнопки всередині картки --- */
+.controls button {
+  background: none;
+  border: none;
+  color: var(--button-bg);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  user-select: none; /* прибираємо текстовий курсор */
+}
+
+.controls button:hover {
+  background-color: rgba(74,140,47,0.1);
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Індикатор статусу --- */
+.status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status.todo { background-color: #ff6b6b; }
+.status.progress { background-color: #feca57; }
+.status.done { background-color: #1dd1a1; }
+
+/* --- Мітки завдання --- */
+.taskLabels {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.taskLabel {
+  height: 8px;
+  width: 32px;
+  border-radius: 4px;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.taskLabel:hover {
+  transform: scale(1.1);
+}
+
+/* --- Dropdown переміщення --- */
+.moveDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  pointer-events: auto;
+  animation: fadeInDropdown 0.2s ease-out;
+  z-index: 1000; /* тільки dropdown */
+}
+
+.moveDropdown button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.moveDropdown button:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.moveDropdown button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes fadeInDropdown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

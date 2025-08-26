@@ -1,0 +1,45 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .header {
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+  }
+  .userInfo {
+    margin-bottom: 10px;
+  }
+  .userEmail {
+    font-size: 14px;
+  }
+  .nav {
+    display: flex;
+    gap: 15px;
+  }
+  .link {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+  }
+  .active {
+    color: #007bff;
+    font-weight: bold;
+  }
+  .logoutButton {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .logoutButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }

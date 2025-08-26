@@ -1,0 +1,10 @@
+/* Додайте ці стилі */
+.outline {
+    background: transparent;
+    border: 2px solid var(--button-bg);
+    color: var(--button-bg);
+  }
+  
+  .outline:hover {
+    background: rgba(74, 140, 47, 0.1);
+  }

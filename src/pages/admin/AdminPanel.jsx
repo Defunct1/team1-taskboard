@@ -7,7 +7,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../utils/firebase/config";
+import { db } from "../../utils/firebase/firebase";
 import { Wrapper, Title, Table } from "./AdminPanel.styles";
 
 export default function AdminPanel() {

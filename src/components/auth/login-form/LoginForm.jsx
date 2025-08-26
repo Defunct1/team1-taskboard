@@ -1,7 +1,7 @@
 // src/components/auth/LoginForm.jsx
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../utils/firebase/config";
+import { auth } from "../../../utils/firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Message } from "./LoginForm.styles";
 
