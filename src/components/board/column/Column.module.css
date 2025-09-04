@@ -7,11 +7,18 @@
   min-width: 280px;
   max-width: 320px;
   box-sizing: border-box;
-  height: fit-content;
+  /* height: fit-content; замінено на auto для стабільності drag */
+  height: auto;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  user-select: none; /* прибирає виділення тексту при кліку на колонку */
+  user-select: none; /* прибирає виділення тексту при кліку */
+  transition: box-shadow 0.2s ease;
+}
+
+/* hover тепер не використовує transform, щоб не конфліктувати з drag */
+.column:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* --- Контейнер дошки --- */
@@ -23,7 +30,6 @@
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
-
 .board::-webkit-scrollbar {
   height: 8px;
 }
@@ -40,7 +46,6 @@
   .column { min-width: 240px; padding: 10px; }
   .board { padding: 16px 12px; gap: 12px; }
 }
-
 @media (max-width: 480px) {
   .column { min-width: 85vw; }
 }
@@ -50,10 +55,11 @@
   margin: 0;
   color: var(--text-primary, #172b4d);
   font-size: 1.1rem;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  pointer-events: none; /* прибирає карету при кліку на заголовок */
+  pointer-events: none;
 }
 
 /* --- Список тасків --- */
@@ -64,6 +70,34 @@
   margin: 12px 0;
 }
 
+/* --- TaskCard (в середині колонки) --- */
+.taskCard {
+  background: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+/* hover анімації дуже легкі і не впливають на drag */
+.taskCard:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* під час drag */
+.taskCard.dragging {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  opacity: 0.9;
+}
+
+/* pending таск */
+.taskCard.pending {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* --- Кнопка додати таск --- */
 .addButton {
   width: 100%;
@@ -71,6 +105,14 @@
   padding: 8px;
   font-size: 0.9rem;
   cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background: var(--primary-color, #1890ff);
+  color: #fff;
+  transition: background 0.2s ease;
+}
+.addButton:hover {
+  background: var(--primary-hover, #40a9ff);
 }
 
 /* --- Форма додавання таску --- */
@@ -79,7 +121,6 @@
   flex-direction: column;
   gap: 8px;
 }
-
 .textarea {
   min-height: 60px;
   padding: 8px;
@@ -90,9 +131,8 @@
   font-family: inherit;
   font-size: 14px;
   outline: none;
-  cursor: text; /* тільки для textarea */
+  cursor: text;
 }
-
 .buttons {
   display: flex;
   gap: 8px;
@@ -103,21 +143,4 @@
   color: var(--error-color, #e74c3c);
   font-size: 0.8rem;
   margin: 8px 0;
-}
-
-/* --- Кнопка додати колонку --- */
-.addColumnBtn {
-  background-color: #4bce97;
-  border: none;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-
-.addColumnBtn:hover {
-  background-color: #3aa16c;
 }

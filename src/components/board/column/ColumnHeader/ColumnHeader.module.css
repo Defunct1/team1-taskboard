@@ -1,0 +1,64 @@
+.columnHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative; /* ✅ важливо */
+    padding: 4px 8px;
+    min-height: 40px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .leftButtons,
+  .rightButtons {
+    display: flex;
+    gap: 4px;
+  }
+  
+
+  .title {
+    margin: 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary, #172b4d);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+/* --- Хедер колонки --- */
+.columnHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  
+  /* Заголовок тепер гнучкий і не вилазить */
+  .title {
+    flex: 1; /* займає весь вільний простір між кнопками */
+    margin: 0;
+    color: var(--text-primary, #172b4d);
+    font-size: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Кнопки у хедері */
+  .headerBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .headerBtn button {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .headerBtn button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  

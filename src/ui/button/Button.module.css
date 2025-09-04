@@ -1,0 +1,52 @@
+/* src/components/ui/button/Button.module.css */
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  
+  .primary {
+    background-color: #1890ff;
+    color: white;
+  }
+  
+  .primary:hover {
+    background-color: #40a9ff;
+  }
+  
+  .primary:disabled {
+    background-color: #d9d9d9;
+    cursor: not-allowed;
+  }
+  
+  .secondary {
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #d9d9d9;
+  }
+  
+  .secondary:hover {
+    background-color: #e6e6e6;
+  }
+  
+  .ghost {
+    background-color: transparent;
+    color: #1890ff;
+    border: 1px solid #1890ff;
+  }
+  
+  .ghost:hover {
+    background-color: #e6f7ff;
+  }
+  
+  .danger {
+    background-color: #ff4d4f;
+    color: white;
+  }
+  
+  .danger:hover {
+    background-color: #ff7875;
+  }

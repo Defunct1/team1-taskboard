@@ -1,8 +1,115 @@
+/* === Board Wrapper === */
+.boardContainer {
+  position: relative;
+  min-height: 100vh;
+  padding: 20px;
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Дошка колонок === */
 .board {
-    display: flex;
-    gap: 16px;
-    padding: 20px;
-    min-height: 80vh;
-    overflow-x: auto;
-    background-color: var(--board-bg);
-  }
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding-top: 70px; /* місце для overlay */
+  min-height: 80vh;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+
+/* Для вебкита */
+.board::-webkit-scrollbar {
+  height: 8px;
+}
+.board::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.board::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* === Overlay редагування === */
+.editOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #1890ff;
+  color: #fff;
+  padding: 15px 20px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.editControls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+}
+
+.editInfo {
+  margin-left: 20px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* === Додавання колонки === */
+.addColumnSection {
+  min-width: 280px;
+  max-width: 280px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.addColumnSection:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* Кнопка додати колонку */
+.addColumnBtn {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #1890ff;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.addColumnBtn:hover:not(:disabled) {
+  background-color: #40a9ff;
+  transform: translateY(-1px);
+}
+
+.addColumnBtn:disabled {
+  background-color: rgba(24, 144, 255, 0.5);
+  cursor: not-allowed;
+}

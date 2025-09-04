@@ -1,0 +1,19 @@
+.board {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  
+  .addColumnSection {
+    min-width: 280px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .addColumnBtn {
+    width: 100%;
+    justify-content: center;
+  }

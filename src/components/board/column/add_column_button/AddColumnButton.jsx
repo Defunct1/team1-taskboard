@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "@/services/firebase";
+import { db } from "utils/firebase/firebase";
 import Button from "../../../ui/button/Button";
 import styles from "./AddColumnButton.module.css";
 

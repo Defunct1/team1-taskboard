@@ -1,129 +1,93 @@
-import { useState, useEffect } from "react";
-import styles from "./BoardPage.module.css";
-import Column from "../../components/board/column/Column";
-import { collection, onSnapshot, updateDoc, doc, addDoc } from "firebase/firestore";
-import { db } from "../../utils/firebase/firebase";
+import React, { useEffect, useState } from "react";
+import styles from './BoardPage.module.css';
+import { useBoardData } from "../../pages/dashboard/boardhooks/useBoardData";
+import { useBoardActions } from "../../pages/dashboard/boardhooks/useBoardActions";
+import { EditOverlay } from "../../pages/dashboard/overlay/EditOverlay";
+import BoardDragDrop from "../../pages/dashboard/dragdrop/BoardDragDrop";
 
 export default function BoardPage() {
-  const [columns, setColumns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { columnsWithTasks, loading } = useBoardData();
+  const {
+    isAddingColumn,
+    isEditing,
+    pendingChanges,
+    addColumn,
+    deleteColumn,
+    addTask,
+    deleteTask,
+    moveTaskLocally,
+    queueColumnsOrder,
+    cancelChanges,
+    saveChanges,
+  } = useBoardActions();
 
-  // Підписка на колонки
+  // Локальний UI для drag&drop
+  const [uiColumns, setUiColumns] = useState([]);
+
+  // Синхронізація локального UI зі свіжими даними
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, "columns"),
-      (snapshot) => {
-        const columnsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setColumns(columnsData);
-        setLoading(false);
-        console.log("Колонки для рендеру:", columnsData);
-      },
-      (error) => {
-        console.error("Помилка завантаження колонок:", error);
-        setLoading(false);
-      }
-    );
+    if (!isEditing && columnsWithTasks) {
+      setUiColumns(columnsWithTasks);
+    }
+  }, [columnsWithTasks, isEditing]);
 
-    return () => unsubscribe();
-  }, []);
+  // Drag & Drop
+  const handleDragEnd = (result) => {
+    const { source, destination, draggableId, type } = result;
+    if (!destination) return;
 
-  // ---- Переміщення таска між колонками ----
-  const moveTask = async (taskId, fromColumnId, toColumnId) => {
-    const fromColumn = columns.find((col) => col.id === fromColumnId);
-    const task = fromColumn?.tasks?.find((t) => t.id === taskId);
+    if (type === "COLUMN") {
+      const next = Array.from(uiColumns);
+      const [moved] = next.splice(source.index, 1);
+      next.splice(destination.index, 0, moved);
 
-    if (!task) return;
+      setUiColumns(next);
+      queueColumnsOrder(next.map((c, idx) => ({ id: c.id, order: idx })));
+      return;
+    }
 
-    try {
-      await updateDoc(doc(db, "tasks", taskId), {
-        columnId: toColumnId,
-        updatedAt: new Date(),
-      });
+    if (type === "TASK") {
+      const sourceColIndex = uiColumns.findIndex(c => String(c.id) === String(source.droppableId));
+      const destColIndex = uiColumns.findIndex(c => String(c.id) === String(destination.droppableId));
+      if (sourceColIndex === -1 || destColIndex === -1) return;
 
-      setColumns((prevColumns) =>
-        prevColumns.map((col) => {
-          if (col.id === fromColumnId) {
-            return { ...col, tasks: col.tasks.filter((t) => t.id !== taskId) };
-          }
-          if (col.id === toColumnId) {
-            return { ...col, tasks: [...(col.tasks || []), task] };
-          }
-          return col;
-        })
-      );
-    } catch (error) {
-      console.error("Помилка переміщення задачі:", error);
+      const next = uiColumns.map(c => ({ ...c, tasks: [...(c.tasks || [])] }));
+      const [movedTask] = next[sourceColIndex].tasks.splice(source.index, 1);
+      next[destColIndex].tasks.splice(destination.index, 0, movedTask);
+
+      setUiColumns(next);
+      moveTaskLocally(draggableId, source.droppableId, destination.droppableId, destination.index);
     }
   };
 
-  // ---- Додавання нового таска ----
-  const addTask = async (columnId, text) => {
-    try {
-      const newTaskRef = await addDoc(collection(db, "tasks"), {
-        text,
-        columnId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-      const newTask = { id: newTaskRef.id, text, columnId };
-
-      setColumns((prevColumns) =>
-        prevColumns.map((col) =>
-          col.id === columnId
-            ? { ...col, tasks: [...(col.tasks || []), newTask] }
-            : col
-        )
-      );
-    } catch (error) {
-      console.error("Помилка додавання задачі:", error);
-    }
-  };
-
-  // ---- Додавання нової колонки ----
-  const handleAddColumn = async (columnId, position) => {
-    try {
-      const newColumnRef = await addDoc(collection(db, "columns"), {
-        title: "Нова колонка",
-        tasks: [],
-        createdAt: new Date(),
-      });
-      const newColumn = { id: newColumnRef.id, title: "Нова колонка", tasks: [] };
-
-      setColumns((prevColumns) => {
-        const index = prevColumns.findIndex((col) => col.id === columnId);
-        if (index === -1) return [...prevColumns, newColumn];
-
-        const newColumns = [...prevColumns];
-        if (position === "before") newColumns.splice(index, 0, newColumn);
-        else if (position === "after") newColumns.splice(index + 1, 0, newColumn);
-        return newColumns;
-      });
-    } catch (error) {
-      console.error("Помилка додавання колонки:", error);
-    }
-  };
+  if (loading) {
+    return <div className={styles.loadingContainer}>⏳ Завантаження...</div>;
+  }
 
   return (
-    <div className={styles.board}>
-      {loading ? (
-        <p>Завантаження колонок...</p>
-      ) : columns.length === 0 ? (
-        <p>Немає колонок. Додайте нову колонку!</p>
-      ) : (
-        columns.map((columnItem) => (
-          <Column
-            key={columnItem.id}
-            column={columnItem}
-            columns={columns}
-            onAddColumn={handleAddColumn}
-            moveTask={moveTask}
-            addTask={addTask} // передаємо в Column
-          />
-        ))
+    <div className={styles.boardContainer}>
+      {isEditing && (
+        <EditOverlay
+          pendingChanges={pendingChanges}
+          onSave={saveChanges}
+          onCancel={() => {
+            setUiColumns(columnsWithTasks || []);
+            cancelChanges();
+          }}
+          isSaving={false}
+        />
       )}
+
+      <BoardDragDrop
+        columnsWithTasks={uiColumns}
+        onDragEnd={handleDragEnd}
+        addColumn={addColumn}
+        isAddingColumn={isAddingColumn}
+        addTask={addTask}
+        moveTask={moveTaskLocally}
+        deleteTask={deleteTask}
+        deleteColumn={deleteColumn}
+      />
     </div>
   );
 }

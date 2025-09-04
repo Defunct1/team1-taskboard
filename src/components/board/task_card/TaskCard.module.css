@@ -1,12 +1,12 @@
 /* --- Карточка завдання --- */
 .card {
-  background: var(--card-bg);
+  background: var(--card-bg, #fff);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 10px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: all 0.2s ease;
-  border-left: 4px solid var(--button-bg);
+  transition: all 0.2s ease, transform 0.15s ease;
+  border-left: 4px solid var(--button-bg, #4a8c2f);
   position: relative;
   cursor: pointer;
   outline: none;
@@ -17,13 +17,21 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
+/* --- Стиль для задач, що очікують підтвердження --- */
+.pendingTask {
+  opacity: 0.6;
+  border-style: dashed;
+  cursor: not-allowed;
+  pointer-events: none; /* блокує взаємодію */
+}
+
 /* --- Текст завдання --- */
 .text {
   margin: 0 0 12px 0;
-  color: var(--text-primary);
+  color: var(--text-primary, #333);
   font-size: 14px;
   line-height: 1.4;
-  user-select: none; /* забороняємо курсор тексту */
+  user-select: none;
 }
 
 /* --- Контейнери для кнопок --- */
@@ -38,13 +46,13 @@
 .controls button {
   background: none;
   border: none;
-  color: var(--button-bg);
+  color: var(--button-bg, #4a8c2f);
   cursor: pointer;
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
   transition: all 0.2s;
-  user-select: none; /* прибираємо текстовий курсор */
+  user-select: none;
 }
 
 .controls button:hover {
@@ -104,7 +112,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   pointer-events: auto;
   animation: fadeInDropdown 0.2s ease-out;
-  z-index: 1000; /* тільки dropdown */
+  z-index: 1000;
 }
 
 .moveDropdown button {
