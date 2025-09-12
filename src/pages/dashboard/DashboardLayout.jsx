@@ -1,9 +1,9 @@
-import { Outlet, useNavigate, NavLink } from "react-router-dom";
-import { signOut } from "firebase/auth";
+import { Outlet, useNavigate } from "react-router-dom";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../utils/firebase/firebase";
 import styles from "./DashboardLayout.module.css";
 import { useEffect, useState } from "react";
-import LoadingSpinner from "../../components/ui/LoadingSpinner";
+import DashboardNav from "./DashboardNav";
 
 export default function DashboardLayout() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -11,7 +11,7 @@ export default function DashboardLayout() {
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserEmail(user.email || "");
       } else {
@@ -25,8 +25,7 @@ export default function DashboardLayout() {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
-      await signOut(auth);
-      navigate("/auth");
+      await signOut(auth); // navigate зробить onAuthStateChanged
     } catch (error) {
       console.error("Помилка при виході:", error);
     } finally {
@@ -40,48 +39,7 @@ export default function DashboardLayout() {
         <div className={styles.userInfo}>
           {userEmail && <span className={styles.userEmail}>{userEmail}</span>}
         </div>
-        <nav className={styles.nav}>
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              isActive ? `${styles.link} ${styles.active}` : styles.link
-            }
-            end
-          >
-            Головна
-          </NavLink>
-          <NavLink
-            to="/dashboard/board"
-            className={({ isActive }) =>
-              isActive ? `${styles.link} ${styles.active}` : styles.link
-            }
-          >
-            Дошки
-          </NavLink>
-          <NavLink
-            to="/dashboard/account"
-            className={({ isActive }) =>
-              isActive ? `${styles.link} ${styles.active}` : styles.link
-            }
-          >
-            Акаунт
-          </NavLink>
-          <NavLink
-            to="/dashboard/support"
-            className={({ isActive }) =>
-              isActive ? `${styles.link} ${styles.active}` : styles.link
-            }
-          >
-            Підтримка
-          </NavLink>
-          <button
-            onClick={handleLogout}
-            className={styles.logoutButton}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? <LoadingSpinner small /> : "Вийти"}
-          </button>
-        </nav>
+        <DashboardNav onLogout={handleLogout} isLoggingOut={isLoggingOut} />
       </header>
 
       <main className={styles.content}>

@@ -1,0 +1,91 @@
+.labelsSection {
+    margin-top: 20px;
+  }
+  
+  .sectionTitle {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .labelsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  
+  .label {
+    display: flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+  }
+  
+  .labelColor {
+    display: none; /* можемо прибрати, колір вже у фоні */
+  }
+  
+  .labelText {
+    margin-right: 6px;
+  }
+  
+  .label button {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .label button:hover {
+    color: #ffdddd;
+  }
+  
+  
+  .addLabelButton, .addLabelForm button {
+    padding: 6px 12px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .addLabelButton {
+    background-color: #4bce97;
+    color: white;
+  }
+  
+  .addLabelButton:hover {
+    background-color: #3aa779;
+  }
+  
+  .addLabelForm input {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 6px;
+    width: 100%;
+  }
+  
+  .colorPalette {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  
+  .colorPalette button {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .colorPalette button.selected {
+    border: 2px solid #000;
+  }
+  

@@ -11,7 +11,8 @@ const ColumnHeader = ({ title, columnId, onDeleteColumn, dragHandleProps = {} })
       <div className={styles.headerBtn} title={`Видалити колонку "${title}"`}>
         <DeleteColumnButton
           columnId={columnId}
-          onDeleted={() => onDeleteColumn(columnId)}
+          columnTitle={title}
+          onDeleted={onDeleteColumn}
           aria-label={`Видалити колонку ${title}`}
         />
       </div>

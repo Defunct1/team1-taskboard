@@ -1,25 +1,22 @@
-import { doc, updateDoc } from 'firebase/firestore';
+// src/services/tasks.js
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../utils/firebase/firebase";
 
 // 🔹 Загальне оновлення завдання
 export const updateTask = async (taskId, updatedData) => {
+  if (!taskId) throw new Error("Невірний taskId");
+
   try {
-    await updateDoc(doc(db, 'tasks', taskId), {
+    await updateDoc(doc(db, "tasks", taskId), {
       ...updatedData,
-      updatedAt: new Date()
+      updatedAt: serverTimestamp()
     });
   } catch (error) {
-    console.error('Помилка оновлення задачі:', error);
+    console.error("Помилка оновлення задачі:", error);
     throw error;
   }
 };
 
 // 🔹 Переміщення завдання в інший стовпець
-export const moveTask = async (taskId, newColumnId) => {
-  try {
-    await updateTask(taskId, { columnId: newColumnId });
-  } catch (error) {
-    console.error('Помилка переміщення задачі:', error);
-    throw error;
-  }
-};
+export const moveTask = (taskId, newColumnId) =>
+  updateTask(taskId, { columnId: newColumnId });

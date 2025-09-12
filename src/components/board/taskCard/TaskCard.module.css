@@ -64,6 +64,21 @@
   cursor: not-allowed;
 }
 
+/* Індикатор коментарів */
+.commentsBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 /* --- Індикатор статусу --- */
 .status {
   position: absolute;
@@ -93,6 +108,7 @@
   display: inline-block;
   transition: transform 0.2s;
 }
+
 
 .taskLabel:hover {
   transform: scale(1.1);

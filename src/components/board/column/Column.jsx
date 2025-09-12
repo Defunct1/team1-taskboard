@@ -1,18 +1,28 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 import Button from "../../ui/button/Button";
-import TaskCard from "../task_card/TaskCard";
+import TaskCard from "../taskCard/TaskCard";
 import styles from "./Column.module.css";
 import { Droppable } from "@hello-pangea/dnd";
 import ColumnHeader from "./ColumnHeader/ColumnHeader.jsx";
 
-const Column = ({ column, columns = [], addTask, moveTask, deleteTask, onDeleteColumn, index }) => {
+const Column = ({
+  column,
+  columns = [],
+  addTask,
+  moveTask,
+  saveTask,
+  deleteTask,
+  onDeleteColumn,
+  index,
+}) => {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
 
-  // Автопідгонка висоти textarea
+  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current && isAddingTask) {
       textareaRef.current.style.height = "auto";
@@ -20,27 +30,53 @@ const Column = ({ column, columns = [], addTask, moveTask, deleteTask, onDeleteC
     }
   }, [newTaskText, isAddingTask]);
 
-  // Сортування задач
-  const sortedTasks = useMemo(() => {
-    return [...(column.tasks || [])].sort((a, b) => {
-      const aTime = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || Date.now());
-      const bTime = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || Date.now());
-      return aTime - bTime;
-    });
-  }, [column.tasks]);
+  // Sort tasks
+  const sortedTasks = column.tasks || [];
 
   const handleAddTask = async () => {
-    if (!newTaskText.trim()) return;
+    if (!newTaskText.trim()) {
+      toast.error("Текст завдання не може бути порожнім");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await addTask(column.id, newTaskText);
+      const newTaskData = {
+        text: newTaskText.trim(),
+        description: "",
+        labels: [],
+        comments: [],
+        dueDate: null,
+        columnId: column.id,
+        status: "todo",
+        order: sortedTasks.length,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      await addTask(column.id, newTaskData);
       setNewTaskText("");
       setIsAddingTask(false);
     } catch (error) {
-      console.error("Помилка додавання:", error);
-      alert(`Помилка: ${error.message}`);
+      console.error("Помилка додавання задачі:", error);
+      toast.error(`Помилка: ${error.message}`);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCancelAdd = () => {
+    setNewTaskText("");
+    setIsAddingTask(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleAddTask();
+    }
+    if (e.key === "Escape") {
+      handleCancelAdd();
     }
   };
 
@@ -49,26 +85,35 @@ const Column = ({ column, columns = [], addTask, moveTask, deleteTask, onDeleteC
       <ColumnHeader
         title={column.title}
         columnId={column.id}
+        taskCount={sortedTasks.length}
         onDeleteColumn={onDeleteColumn}
       />
 
       <Droppable droppableId={String(column.id)} type="TASK">
-        {(providedDroppable) => (
+        {(providedDroppable, snapshot) => (
           <div
-            className={styles.tasks}
+            className={`${styles.tasks} ${snapshot.isDraggingOver ? styles.draggingOver : ""}`}
             {...providedDroppable.droppableProps}
             ref={providedDroppable.innerRef}
           >
-            {sortedTasks.map((task, index) => (
+            {sortedTasks.map((task, taskIndex) => (
               <TaskCard
-                key={String(task.id || index)}
+                key={String(task.id)}
                 task={task}
                 columns={columns}
                 moveTask={moveTask}
-                index={index}
+                saveTask={saveTask}
+                deleteTask={deleteTask}
+                index={taskIndex}
               />
             ))}
             {providedDroppable.placeholder}
+
+            {sortedTasks.length === 0 && !isAddingTask && (
+              <div className={styles.emptyState}>
+                <p>Немає завдань</p>
+              </div>
+            )}
           </div>
         )}
       </Droppable>
@@ -79,22 +124,27 @@ const Column = ({ column, columns = [], addTask, moveTask, deleteTask, onDeleteC
             ref={textareaRef}
             value={newTaskText}
             onChange={(e) => setNewTaskText(e.target.value)}
-            placeholder="Введіть текст завдання"
+            onKeyDown={handleKeyPress}
+            placeholder="Введіть текст завдання..."
             className={styles.textarea}
             rows={1}
             autoFocus
+            maxLength={500}
           />
+          <div className={styles.textCounter}>
+            {newTaskText.length}/500 символів
+          </div>
           <div className={styles.buttons}>
             <Button
               onClick={handleAddTask}
               variant="primary"
               isLoading={isLoading}
-              disabled={isLoading}
+              disabled={isLoading || !newTaskText.trim()}
             >
-              Додати
+              {isLoading ? "Додавання..." : "Додати"}
             </Button>
             <Button
-              onClick={() => setIsAddingTask(false)}
+              onClick={handleCancelAdd}
               variant="secondary"
               disabled={isLoading}
             >
@@ -103,7 +153,11 @@ const Column = ({ column, columns = [], addTask, moveTask, deleteTask, onDeleteC
           </div>
         </div>
       ) : (
-        <Button onClick={() => setIsAddingTask(true)} variant="secondary">
+        <Button
+          onClick={() => setIsAddingTask(true)}
+          variant="secondary"
+          className={styles.addButton}
+        >
           + Додати завдання
         </Button>
       )}
@@ -126,6 +180,7 @@ Column.propTypes = {
   ).isRequired,
   addTask: PropTypes.func.isRequired,
   moveTask: PropTypes.func.isRequired,
+  saveTask: PropTypes.func.isRequired,
   deleteTask: PropTypes.func.isRequired,
   onDeleteColumn: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,

@@ -1,0 +1,47 @@
+.actionsContainer {
+    display: flex;
+    justify-content: flex-end; /* кнопки вирівнюються вправо */
+    gap: 10px; /* відстань між кнопками */
+    margin-top: 20px;
+  }
+  
+  .saveButton {
+    background-color: #4caf50; /* зелена кнопка */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+  
+  .saveButton:hover:enabled {
+    background-color: #45a049;
+  }
+  
+  .saveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .cancelButton {
+    background-color: #f44336; /* червона кнопка */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+  
+  .cancelButton:hover:enabled {
+    background-color: #da190b;
+  }
+  
+  .cancelButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  

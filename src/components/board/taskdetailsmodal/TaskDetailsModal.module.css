@@ -1,271 +1,197 @@
-/* Модальне накладення */
+/* TaskDetailsModal.module.css */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(3px);
+  inset: 0;
+  background: rgba(0,0,0,0.55);
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  padding: 40px 20px;
+  padding: 20px;
   z-index: 1000;
-  overflow-y: auto;
 }
 
-/* Основний контейнер модалки */
 .modalContent {
-  background: #f5f6f5;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 768px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.2s ease-out;
-  position: relative;
+  width: 800px;
+  max-width: 100%;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 0;
-  min-height: 0;
+  gap: 18px;
+  overflow: hidden;
 }
 
-/* Хедер модалки */
 .header {
-  background: #172b4d;
-  color: white;
-  padding: 12px 24px;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
-/* Кнопка закриття */
 .closeButton {
-  font-size: 24px;
   background: none;
   border: none;
+  font-size: 20px;
   cursor: pointer;
-  color: #dfe1e6;
-  transition: color 0.2s;
-  padding: 4px;
+  padding: 6px;
+  border-radius: 6px;
 }
-
-.closeButton:hover {
-  color: #fff;
-}
-
-/* Поля вводу */
-.titleInput,
-.descriptionInput,
-.commentInput {
-  width: 100%;
-  border-radius: 8px;
-  padding: 12px;
-  font-family: inherit;
-  font-size: 14px;
-  box-sizing: border-box;
-  border: 1px solid #e0e0e0;
-  transition: all 0.2s;
-}
+.closeButton:hover { background: rgba(0,0,0,0.04); }
 
 .titleInput {
-  font-size: 20px;
-  font-weight: 600;
   grid-column: 1 / -1;
-  margin: 0 0 8px 0;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.titleInput:focus,
-.descriptionInput:focus,
-.commentInput:focus {
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
   outline: none;
-  border-color: #388bff;
-  box-shadow: 0 0 4px rgba(56, 139, 255, 0.3);
-  background-color: #f7f9fc;
-}
-
-/* Основний контент і сайдбар */
-.mainContent,
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 0;
-  padding: 16px 24px;
-  background: #fff;
+  resize: none;
+  width: 100%;
+  padding: 6px 4px;
 }
 
 .mainContent {
-  grid-column: 1 / 2;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .sidebar {
-  grid-column: 2 / 3;
+  overflow-y: auto;
+  padding-left: 6px;
+  border-left: 1px solid rgba(0,0,0,0.04);
 }
 
-/* Коментарі */
-.comment {
-  padding: 12px;
-  background: #f7f9fc;
-  border-radius: 8px;
+.section { margin-bottom: 12px; }
+.sectionTitle { margin: 0 0 8px 0; font-size: 14px; font-weight: 600; }
+
+.descriptionInput {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
 }
 
-.commentHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.commentAuthor {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.commentTime {
-  color: #6b778c;
-  font-size: 12px;
-}
-
-.commentText {
-  color: #172b4d;
-  font-size: 14px;
-}
-
-/* Labels */
-.labelsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #f1f2f4;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.label:hover {
-  transform: scale(1.05);
-}
-
-/* Dropdown для переміщення */
-.moveWrapper {
-  position: relative;
-  margin-bottom: 8px;
-}
-
-.moveDropdown {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+.commentsList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  animation: fadeInDropdown 0.2s ease-out;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 1000; /* збільшили для безпечного відображення */
-  max-height: 200px;
+  gap: 8px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
-.moveDropdown button {
-  background: none;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  text-align: left;
+.comment {
+  padding: 8px;
+  background: #f6f7fb;
+  border-radius: 6px;
+}
+
+.commentHeader {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
+  font-size:12px;
+  color:#555;
+}
+
+.commentInput {
+  width: 100%;
+  min-height: 48px;
+  resize: vertical;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
+}
+
+.labelsContainer {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.label {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 8px;
+  border-radius:14px;
+  background:#f3f3f3;
+  font-size:13px;
+}
+
+.labelColor {
+  width:12px; height:12px; border-radius:50%;
+  display:inline-block;
+}
+
+.removeLabel {
+  background:none; border:none; cursor:pointer; font-weight:700;
+  padding:2px 6px;
+}
+
+.colorPicker { display:flex; gap:6px; margin:8px 0; flex-wrap:wrap; }
+.colorOption {
+  width:22px; height:22px; border-radius:50%; border:2px solid transparent; cursor:pointer;
+}
+.selected { border-color: #111; }
+
+.labelInput { width:100%; padding:6px; border-radius:6px; border:1px solid #ddd; }
+
+.moveDropdown { background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:8px; box-shadow:0 6px 18px rgba(0,0,0,0.12); }
+
+.moveOption { display:block; width:100%; padding:8px; border:none; background:none; text-align:left; cursor:pointer; }
+.moveOption:hover { background:rgba(0,0,0,0.03); }
+
+.primary {
+  background:#1976d2; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;
+}
+.primary:disabled { opacity:0.6; cursor:not-allowed; }
+
+.secondary {
+  background:rgba(0,0,0,0.06); color:#222; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;
+}
+
+.actionButtons { grid-column: 1 / -1; display:flex; justify-content:flex-end; gap:8px; margin-top:10px; }
+
+@media (max-width: 800px) {
+  .modalContent { grid-template-columns: 1fr; padding: 14px; }
+  .sidebar { border-left:none; padding-left:0; }
+}
+
+
+.dropdownWrapper {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
   font-size: 14px;
-  white-space: nowrap;
-  transition: all 0.2s;
 }
 
-.moveDropdown button:hover {
-  background: rgba(0,0,0,0.05);
-}
-
-.moveDropdown button:disabled {
-  opacity: 0.5;
+.dropdown:disabled {
+  background: #f5f5f5;
+  color: #999;
   cursor: not-allowed;
 }
 
-/* Кнопки дій */
-.actionButtons {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  grid-column: 1 / -1;
-  justify-content: flex-end;
-  padding: 16px 24px;
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
-}
-
-button.primary {
-  background: #0052cc;
-  color: #fff;
-}
-
-button.primary:hover {
-  background: #003d99;
-}
-
-button.secondary {
-  background: #dfe1e6;
-  color: #172b4d;
-}
-
-button.secondary:hover {
-  background: #c1c7d0;
-}
-
-/* Анімації */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInDropdown {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Адаптивність */
-@media (max-width: 768px) {
-  .modalContent {
-    grid-template-columns: 1fr;
-    padding: 0;
-    width: 90%;
-  }
-  .modalOverlay {
-    padding: 20px 12px;
-    align-items: center;
-  }
-  .sidebar {
-    order: -1;
-    margin-bottom: 16px;
-    padding: 16px;
-  }
-  .mainContent {
-    padding: 16px;
-  }
-  .actionButtons {
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-  }
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

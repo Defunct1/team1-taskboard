@@ -1,0 +1,30 @@
+.wrapper {
+  min-width: 280px;
+  margin: 0 10px;
+  flex: 0 0 auto; /* Ensure it behaves like a column */
+  align-self: flex-start; /* Align with column tops */
+}
+
+.form {
+  background: #f1f2f4;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.addButton {
+  width: 100%;
+  text-align: left;
+}

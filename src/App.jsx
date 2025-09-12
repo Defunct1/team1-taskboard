@@ -13,10 +13,13 @@ import AdminPanel from "./pages/admin/AdminPanel";
 import BoardPage from "./pages/dashboard/BoardPage";
 import AccountPage from "./pages/dashboard/AccountPage";
 import SupportPage from "./pages/dashboard/SupportPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <Router basename="/team1-taskboard">
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route
           path="/"
@@ -26,7 +29,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/auth/*"
           element={
@@ -35,7 +37,6 @@ function App() {
             </PublicRoute>
           }
         />
-
         <Route
           path="/dashboard/*"
           element={
@@ -49,7 +50,6 @@ function App() {
           <Route path="account" element={<AccountPage />} />
           <Route path="support" element={<SupportPage />} />
         </Route>
-
         <Route
           path="/admin/*"
           element={
@@ -58,7 +58,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Router>
