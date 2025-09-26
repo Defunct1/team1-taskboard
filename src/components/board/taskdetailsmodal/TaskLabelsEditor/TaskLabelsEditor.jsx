@@ -4,57 +4,65 @@ import { v4 as uuidv4 } from "uuid";
 import styles from "../TaskDetailsModal.module.css";
 
 export default function TaskLabelsEditor({ task, setTask, isDisabled }) {
-  console.log("TaskLabelsEditor setTask is function:", typeof setTask === "function");
-
   const [adding, setAdding] = useState(false);
   const [labelText, setLabelText] = useState("");
   const [labelColor, setLabelColor] = useState("#4bce97");
 
   const palette = [
-    "#4bce97",
-    "#e774bb",
-    "#faa53d",
-    "#9f8fef",
-    "#e44d40",
-    "#1dd1a1",
-    "#ff6b6b",
-    "#feca57",
-    "#00a8cc",
-    "#f39c12",
-    "#8e44ad",
-    "#2ecc71",
+    "#4bce97", "#e774bb", "#faa53d", "#9f8fef", "#e44d40",
+    "#1dd1a1", "#ff6b6b", "#feca57", "#00a8cc", "#f39c12",
+    "#8e44ad", "#2ecc71",
   ];
 
-  const add = () => {
-    console.log("TaskLabelsEditor add called");
-    if (typeof setTask !== "function") {
-      console.error("setTask is not a function:", setTask);
-      return;
-    }
+  const addLabel = () => {
+    // Дозволяємо створювати мітки без тексту, але з кольором
+    if (!labelColor) return;
+
     setTask(prev => ({
       ...prev,
-      labels: [...(prev.labels || []), { id: uuidv4(), color: labelColor, text: labelText.trim() }],
+      labels: [
+        ...(prev.labels || []),
+        { 
+          id: uuidv4(), 
+          text: labelText.trim(), 
+          color: labelColor 
+        }
+      ],
     }));
+
     setLabelText("");
+    setLabelColor("#4bce97"); // Скидаємо до стандартного кольору
     setAdding(false);
   };
 
-  const remove = (id) => {
-    console.log("TaskLabelsEditor remove called with id:", id);
-    if (typeof setTask !== "function") {
-      console.error("setTask is not a function:", setTask);
-      return;
-    }
-    setTask(prev => ({ ...prev, labels: (prev.labels || []).filter(l => l.id !== id) }));
+  const removeLabel = (id) => {
+    setTask(prev => ({
+      ...prev,
+      labels: (prev.labels || []).filter(l => l.id !== id),
+    }));
+  };
+
+  const handleColorSelect = (color) => {
+    setLabelColor(color);
+    // Автоматично додаємо мітку при виборі кольору, якщо хочете
+    // Як варіант: раскоментуйте наступний рядок:
+    // addLabel();
+  };
+
+  const cancelAdding = () => {
+    setAdding(false);
+    setLabelText("");
+    setLabelColor("#4bce97");
   };
 
   return (
     <div className={styles.section}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className={styles.sectionHeader}>
         <h3 className={styles.sectionTitle}>Мітки</h3>
         <button
+          type="button"
           className={styles.secondary}
-          onClick={() => setAdding(v => !v)}
+          onClick={() => setAdding(!adding)}
           disabled={isDisabled}
         >
           {adding ? "× Скасувати" : "+ Додати"}
@@ -64,10 +72,11 @@ export default function TaskLabelsEditor({ task, setTask, isDisabled }) {
       <div className={styles.labelsContainer}>
         {(task.labels || []).map(l => (
           <div key={l.id} className={styles.label} style={{ background: l.color }}>
-            {l.text ? <span className={styles.labelText}>{l.text}</span> : null}
+            {l.text && <span className={styles.labelText}>{l.text}</span>}
             <button
+              type="button"
               className={styles.removeLabel}
-              onClick={() => remove(l.id)}
+              onClick={() => removeLabel(l.id)}
               disabled={isDisabled}
             >
               ×
@@ -77,38 +86,77 @@ export default function TaskLabelsEditor({ task, setTask, isDisabled }) {
       </div>
 
       {adding && (
-        <div style={{ marginTop: 8 }}>
+        <div className={styles.addLabelForm}>
           <div className={styles.colorPicker}>
-            {palette.map(c => (
+            <div className={styles.selectedColorPreview}>
+              Обраний колір: 
+              <span 
+                className={styles.colorPreview} 
+                style={{ background: labelColor }}
+              />
+            </div>
+            {palette.map(color => (
               <button
-                key={c}
+                key={color}
                 type="button"
-                className={`${styles.colorOption} ${labelColor === c ? styles.selected : ""}`}
-                style={{ background: c }}
-                onClick={() => setLabelColor(c)}
+                className={`${styles.colorOption} ${labelColor === color ? styles.selected : ""}`}
+                style={{ background: color }}
+                onClick={() => setLabelColor(color)}
                 disabled={isDisabled}
+                title={color}
               />
             ))}
           </div>
+          
           <input
+            type="text"
             className={styles.labelInput}
             value={labelText}
             onChange={e => setLabelText(e.target.value)}
-            placeholder="Назва (необов'язково)"
+            placeholder="Назва мітки (необов'язково)"
             disabled={isDisabled}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                addLabel();
+              }
+            }}
           />
-          <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
-            <button className={styles.primary} onClick={add} disabled={isDisabled}>
-              Додати
+          
+          <div className={styles.addCancelButtons}>
+            <button
+              type="button"
+              className={styles.primary}
+              onClick={addLabel}
+              disabled={isDisabled || !labelColor}
+            >
+              Додати мітку
             </button>
             <button
+              type="button"
               className={styles.secondary}
-              onClick={() => setAdding(false)}
+              onClick={cancelAdding}
               disabled={isDisabled}
             >
               Скасувати
             </button>
           </div>
+
+          {/* Додатковий спосіб: додавати мітку просто кліком на колір */}
+          <div className={styles.quickAddHint}>
+            <small>Клікніть на колір, потім на "Додати мітку"</small>
+          </div>
+        </div>
+      )}
+
+      {/* Показуємо обраний колір навіть коли форма не активна */}
+      {!adding && (
+        <div className={styles.currentColorInfo}>
+          <small>Наступна мітка буде кольору: </small>
+          <span 
+            className={styles.colorPreviewSmall} 
+            style={{ background: labelColor }}
+            title={labelColor}
+          />
         </div>
       )}
     </div>
@@ -117,8 +165,18 @@ export default function TaskLabelsEditor({ task, setTask, isDisabled }) {
 
 TaskLabelsEditor.propTypes = {
   task: PropTypes.shape({
-    labels: PropTypes.array,
+    labels: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        text: PropTypes.string,
+        color: PropTypes.string,
+      })
+    ),
   }).isRequired,
   setTask: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
+};
+
+TaskLabelsEditor.defaultProps = {
+  isDisabled: false,
 };

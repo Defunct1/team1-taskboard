@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import Button from "../../ui/button/Button";
@@ -22,16 +22,16 @@ const Column = ({
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
 
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current && isAddingTask) {
-      textareaRef.current.style.height = "auto";
+  const resizeTextarea = () => {
+    if (!textareaRef.current) return;
+      textareaRef.current.style.height = "auto"; // спершу скидаємо висоту
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [newTaskText, isAddingTask]);
+  };
+  
 
   // Sort tasks
-  const sortedTasks = column.tasks || [];
+  const sortedTasks = (column.tasks || []).slice().sort((a, b) => a.order - b.order);
+
 
   const handleAddTask = async () => {
     if (!newTaskText.trim()) {
@@ -105,7 +105,8 @@ const Column = ({
                 saveTask={saveTask}
                 deleteTask={deleteTask}
                 index={taskIndex}
-              />
+                isSaving={false} // або передайте реальний стан збереження
+            />
             ))}
             {providedDroppable.placeholder}
 
@@ -123,7 +124,10 @@ const Column = ({
           <textarea
             ref={textareaRef}
             value={newTaskText}
-            onChange={(e) => setNewTaskText(e.target.value)}
+            onChange={(e) => {
+              setNewTaskText(e.target.value);
+              resizeTextarea();
+            }}
             onKeyDown={handleKeyPress}
             placeholder="Введіть текст завдання..."
             className={styles.textarea}
@@ -131,6 +135,7 @@ const Column = ({
             autoFocus
             maxLength={500}
           />
+
           <div className={styles.textCounter}>
             {newTaskText.length}/500 символів
           </div>
@@ -164,6 +169,9 @@ const Column = ({
     </div>
   );
 };
+
+
+
 
 Column.propTypes = {
   column: PropTypes.shape({

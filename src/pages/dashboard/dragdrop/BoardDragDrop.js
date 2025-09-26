@@ -7,7 +7,6 @@ import AddColumnButton from "../../../components/board/column/addColumnButton/Ad
 
 const BoardDragDrop = ({
   columnsWithTasks,
-  isAddingColumn,
   addColumn,
   addTask,
   moveTask,
@@ -16,40 +15,34 @@ const BoardDragDrop = ({
   deleteColumn,
   queueColumnsOrder,
 }) => {
+
   const onDragEnd = (result) => {
     const { source, destination, draggableId, type } = result;
+    
+    console.log("🎯 Drag result:", result);
+    
     if (!destination) {
-      console.log("Drag cancelled: No destination");
+      console.log("❌ No destination - canceling");
       return;
     }
-
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      console.log("Drag cancelled: Same position");
+  
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      console.log("❌ Same position - canceling");
       return;
     }
-
-    console.log("onDragEnd:", { draggableId, type, source, destination });
-
+  
     if (type === "COLUMN") {
+      console.log("📦 Moving column");
       const reordered = reorderColumns(columnsWithTasks, source.index, destination.index);
-      
-      // ✅ ПРАВИЛЬНО: передаємо тільки один раз
-      const payload = reordered.map((column, idx) => ({
-        id: String(column.id),
-        order: idx // Використовуємо новий індекс як порядок
-      }));
-      
-      console.log("Reordered columns:", payload);
-      queueColumnsOrder(payload);
-      
+      const payload = reordered.map((column, idx) => ({ id: String(column.id), order: idx }));
+      queueColumnsOrder(payload); // ✅ Без .unwrap()
     } else if (type === "TASK") {
-      moveTask(
-        String(draggableId), 
-        String(source.droppableId), 
-        String(destination.droppableId), 
+      console.log("✅ TASK drag - processing move");
+      
+      moveTask( // ✅ Без .unwrap()
+        String(draggableId),
+        String(source.droppableId),
+        String(destination.droppableId),
         destination.index
       );
     }
@@ -71,8 +64,7 @@ const BoardDragDrop = ({
             index={index}
           />
         ))}
-        
-        {/* Додаємо AddColumnButton */}
+
         <div className={styles.addColumnSection}>
           <AddColumnButton 
             onColumnAdded={addColumn} 

@@ -1,23 +1,28 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { useBoardActions } from "../../../../pages/dashboard/boardhooks/useBoardActions";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteColumn } from "../../../../store/boardSlice";
 import Button from "../../../ui/button/Button";
 import styles from "./DeleteColumnButton.module.css";
 
 const DeleteColumnButton = ({ columnId, columnTitle }) => {
-  const { deleteColumn, isAddingColumn } = useBoardActions();
+  const dispatch = useDispatch();
+  const isAddingColumn = useSelector((state) => state.board.isAddingColumn);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDeleteColumn = async () => {
     const confirmed = window.confirm(
-      `Ви впевнені, що хочете видалити колонку "${columnTitle}"? Ця дія видалить всі завдання в колонці і її неможливо буде скасувати.`
+      `Ви впевнені, що хочете видалити колонку "${columnTitle}"? 
+      Ця дія видалить всі завдання в колонці і її неможливо буде скасувати.`
     );
 
     if (!confirmed) return;
 
     setIsLoading(true);
     try {
-      await deleteColumn(columnId);
+      // ✅ ВИДАЛИТИ .unwrap()
+      dispatch(deleteColumn(columnId));
+      // Додайте невелику затримку для показу стану завантаження
+      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error) {
       console.error("Помилка видалення колонки:", error);
       alert(`Помилка: ${error.message}`);
@@ -38,11 +43,6 @@ const DeleteColumnButton = ({ columnId, columnTitle }) => {
       {isLoading || isAddingColumn ? "Видалення..." : "Видалити колонку"}
     </Button>
   );
-};
-
-DeleteColumnButton.propTypes = {
-  columnId: PropTypes.string.isRequired,
-  columnTitle: PropTypes.string.isRequired,
 };
 
 export default DeleteColumnButton;

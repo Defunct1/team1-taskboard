@@ -1,61 +1,59 @@
-import React from "react";
+// src/pages/dashboard/BoardPage.jsx
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styles from "./BoardPage.module.css";
-import { useBoardActions } from "./boardhooks/useBoardActions";
-import { EditOverlay } from "./overlay/EditOverlay";
-import BoardDragDrop from "./dragdrop/BoardDragDrop";
+import BoardDragDrop from "../../pages/dashboard/dragdrop/BoardDragDrop";
+import { EditOverlay } from "../../pages/dashboard/overlay/EditOverlay";
+import {
+  startBoardSync,
+  stopBoardSync,
+  moveTaskOptimistic,
+  queueColumnsOrder,
+  addColumn,
+  addTask,
+  deleteTask,
+  deleteColumn,
+  saveChanges,
+  cancelChanges,
+} from "../../store/boardSlice";
 
 export default function BoardPage() {
-  const {
-    columnsWithTasks,
-    loading,
-    isAddingColumn,
-    // isEditing,
-    pendingChanges,
-    deleteColumn,
-    addTask,
-    deleteTask,
-    moveTaskLocally,
-    saveTask,
-    queueColumnsOrder,
-    cancelChanges,
-    saveChanges,
-  } = useBoardActions();
+  const dispatch = useDispatch();
+  const { columns, loading, isEditing, pendingChanges } = useSelector((s) => s.board);
 
-  if (loading) {
-    return <div className={styles.loadingContainer}>⏳ Завантаження...</div>;
-  }
+  useEffect(() => {
+    dispatch(startBoardSync());
+    return () => {
+      dispatch(stopBoardSync());
+    };
+  }, [dispatch]);
+
+  if (loading) return <div className={styles.loadingContainer}>⏳ Завантаження...</div>;
 
   return (
     <div className={styles.boardContainer}>
-      {/* DEBUG PANEL */}
-      {/* <div className={styles.debugPanel}>
-        <strong>DEBUG:</strong>
-        <pre>isEditing: {JSON.stringify(isEditing)}</pre>
-        <pre>pendingChanges: {JSON.stringify(pendingChanges, null, 2)}</pre>
-        <pre>columnsWithTasks: {JSON.stringify(columnsWithTasks, null, 2)}</pre>
-      </div> */}
-
-      {pendingChanges.length > 0 && (
+      {isEditing && (
         <EditOverlay
           pendingChanges={pendingChanges}
-          onSave={saveChanges}
-          onCancel={cancelChanges}
-          isSaving={isAddingColumn}
+          onSave={() => dispatch(saveChanges())}
+          onCancel={() => dispatch(cancelChanges())}
+          isSaving={false}
         />
       )}
 
-      <div className={styles.boardWrapper}>
-        <BoardDragDrop
-          columnsWithTasks={columnsWithTasks}
-          isAddingColumn={isAddingColumn}
-          addTask={addTask}
-          moveTask={moveTaskLocally}
-          saveTask={saveTask}
-          deleteTask={deleteTask}
-          deleteColumn={deleteColumn}
-          queueColumnsOrder={queueColumnsOrder}
-        />
-      </div>
+      {/* ✅ Тепер використовуємо актуальний стан з Redux */}
+      <BoardDragDrop
+        columnsWithTasks={columns || []}
+        addColumn={(title) => dispatch(addColumn(title))}
+        addTask={(colId, data) => dispatch(addTask(colId, data))}
+        moveTask={(taskId, fromColumnId, toColumnId, newIndex) => 
+          dispatch(moveTaskOptimistic({ taskId, fromColumnId, toColumnId, newIndex }))
+        }
+        saveTask={(task) => console.log("Save task:", task)}
+        deleteTask={(id) => dispatch(deleteTask(id))}
+        deleteColumn={(id) => dispatch(deleteColumn(id))}
+        queueColumnsOrder={(order) => dispatch(queueColumnsOrder(order))}
+      />
     </div>
   );
 }

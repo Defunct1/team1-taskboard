@@ -6,16 +6,15 @@ import TaskModalHeader from "./TaskModalHeader.jsx";
 import TaskModalTextFields from "./TaskModalTextFields.jsx";
 import TaskLabelsEditor from "./TaskLabelsEditor/TaskLabelsEditor.jsx";
 import TaskCommentsSection from "./TaskCommentsSection/TaskCommentsSection.jsx";
-import TaskMoveDropdown from "./TaskMoveDropdown.jsx";
 import TaskModalActions from "./TaskModalActions/TaskModalActions.jsx";
 
 export default function TaskDetailsModal({
   task: initialTask,
   columns,
   onClose,
-  onMove,
   onSave,
   isSaving,
+  moveTask,
 }) {
   const [task, setTask] = useState(() => ({
     id: initialTask?.id ?? "",
@@ -34,10 +33,6 @@ export default function TaskDetailsModal({
   const [localSaving, setLocalSaving] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const titleRef = useRef(null);
-
-  useEffect(() => {
-    console.log("TaskDetailsModal setTask is function:", typeof setTask === "function");
-  }, []);
 
   useEffect(() => {
     setTask({
@@ -85,14 +80,6 @@ export default function TaskDetailsModal({
     }
   }, [task, onSave, handleClose]);
 
-  const handleMove = useCallback((newColumnId) => {
-    if (onMove) {
-      // ✅ ПРАВИЛЬНО: передаємо task.id ТА newColumnId
-      onMove(task.id, newColumnId);
-      handleClose();
-    }
-  }, [onMove, task.id, handleClose]);
-
   useEffect(() => {
     if (titleRef.current) {
       titleRef.current.style.height = "auto";
@@ -102,10 +89,9 @@ export default function TaskDetailsModal({
 
   const handleTitleChange = useCallback(
     (e) => {
-      console.log("TaskDetailsModal handleTitleChange called");
       setTask((prev) => ({ ...prev, text: e.target.value }));
     },
-    [setTask]
+    []
   );
 
   const saving = localSaving || isSaving;
@@ -134,12 +120,12 @@ export default function TaskDetailsModal({
           <TaskLabelsEditor task={task} setTask={setTask} isDisabled={saving} />
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Дії</h3>
-            <TaskMoveDropdown
-              task={task}
-              columns={columns}
-              onMove={handleMove} // Use onMove instead of setTask
-              isDisabled={saving}
-            />
+            
+            {/* ✅ Видалено TaskMoveDropdown */}
+            <p style={{ fontSize: '14px', color: '#666', marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '4px' }}>
+              💡 Використовуйте drag-and-drop для переміщення між колонками
+            </p>
+            
             <button
               className={styles.secondary}
               style={{ width: "100%", marginTop: 8 }}
@@ -184,6 +170,6 @@ TaskDetailsModal.propTypes = {
   columns: PropTypes.array.isRequired,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  onMove: PropTypes.func,
   isSaving: PropTypes.bool,
+  moveTask: PropTypes.func,
 };

@@ -4,7 +4,16 @@ import { Draggable } from "@hello-pangea/dnd";
 import TaskDetailsModal from "../taskdetailsmodal/TaskDetailsModal";
 import styles from "./TaskCard.module.css";
 
-export default function TaskCard({ task, index, columns, saveTask, deleteTask, moveTask, isPending = false }) {
+export default function TaskCard({ 
+  task, 
+  index, 
+  columns, 
+  saveTask, 
+  deleteTask, 
+  moveTask, 
+  isPending = false,
+  isSaving = false
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSave = async (updatedTask) => {
@@ -16,23 +25,11 @@ export default function TaskCard({ task, index, columns, saveTask, deleteTask, m
     }
   };
 
-  // const handleMove = async (newColumnId) => {
-  //   try {
-  //     await moveTask(task.id, newColumnId);
-  //     setIsModalOpen(false);
-  //   } catch (error) {
-  //     console.error("Помилка переміщення:", error);
-  //   }
-  // };
-
-  const handleDelete = async () => {
-    if (window.confirm("Видалити це завдання?")) {
-      try {
-        await deleteTask(task.id);
-        setIsModalOpen(false);
-      } catch (error) {
-        console.error("Помилка видалення:", error);
-      }
+  // ✅ Виправлена функція для передачі в onMove
+  const handleMove = (taskId, fromColumnId, toColumnId, newIndex) => {
+    console.log("TaskCard handleMove:", { taskId, fromColumnId, toColumnId, newIndex });
+    if (moveTask) {
+      moveTask(taskId, fromColumnId, toColumnId, newIndex);
     }
   };
 
@@ -41,10 +38,10 @@ export default function TaskCard({ task, index, columns, saveTask, deleteTask, m
       <Draggable draggableId={String(task.id)} index={index} isDragDisabled={isPending}>
         {(provided, snapshot) => (
           <div
-            className={`${styles.card} ${isPending ? styles.pendingTask : ""}`}
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            className={`${styles.card} ${isPending ? styles.pendingTask : ""}`}
             style={{
               ...provided.draggableProps.style,
               opacity: snapshot.isDragging ? 0.8 : 1,
@@ -54,7 +51,6 @@ export default function TaskCard({ task, index, columns, saveTask, deleteTask, m
           >
             <p className={styles.text}>{task.text}</p>
 
-            {/* ✅ Відображення міток */}
             {task.labels?.length > 0 && (
               <div className={styles.taskLabels}>
                 {task.labels.map((label) => (
@@ -68,16 +64,14 @@ export default function TaskCard({ task, index, columns, saveTask, deleteTask, m
               </div>
             )}
 
-            {/* ✅ Індикатор статусу */}
             <div className={`${styles.status} ${styles[task.status || "todo"]}`} />
-
-            {/* ✅ Інформація про коментарі */}
+          
             {task.comments?.length > 0 && (
               <div className={styles.commentsBadge}>
                 💬 {task.comments.length}
-              </div>
+             </div>
             )}
-          </div>
+         </div>
         )}
       </Draggable>
 
@@ -87,8 +81,10 @@ export default function TaskCard({ task, index, columns, saveTask, deleteTask, m
           columns={columns}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          onMove={moveTask}
-          onDelete={handleDelete}
+          onMove={handleMove} // ✅ передаємо виправлену функцію
+          moveTask={moveTask} // для сумісності
+          isSaving={isSaving}
+          onDelete={() => deleteTask(task.id, task.columnId)}
         />
       )}
     </>
@@ -110,8 +106,10 @@ TaskCard.propTypes = {
   deleteTask: PropTypes.func.isRequired,
   moveTask: PropTypes.func.isRequired,
   isPending: PropTypes.bool,
+  isSaving: PropTypes.bool,
 };
 
 TaskCard.defaultProps = {
   isPending: false,
+  isSaving: false,
 };

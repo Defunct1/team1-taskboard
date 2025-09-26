@@ -144,3 +144,9 @@
   font-size: 0.8rem;
   margin: 8px 0;
 }
+
+.draggingOver {
+  background-color: #f0f8ff; /* світло-блакитний фон */
+  border: 2px dashed #4a90e2; /* пунктирна рамка */
+  transition: background-color 0.2s, border 0.2s;
+}

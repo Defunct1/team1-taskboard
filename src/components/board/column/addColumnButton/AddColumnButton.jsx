@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useBoardActions } from "../../../../pages/dashboard/boardhooks/useBoardActions";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addColumn } from "../../../../store/boardSlice";
 import Button from "../../../ui/button/Button";
 import styles from "../../../../pages/dashboard/BoardPage.module.css";
 
-
-const AddColumnButton = ({ currentColumnsCount = 0 }) => {
-  const { addColumn, isAddingColumn } = useBoardActions();
+const AddColumnButton = () => {
+  const dispatch = useDispatch();
+  const isAddingColumn = useSelector((state) => state.board.isAddingColumn);
   const [isAdding, setIsAdding] = useState(false);
   const [columnTitle, setColumnTitle] = useState("");
 
@@ -16,11 +17,10 @@ const AddColumnButton = ({ currentColumnsCount = 0 }) => {
     }
 
     try {
-      await addColumn(columnTitle);
+      await dispatch(addColumn(columnTitle));
       setColumnTitle("");
       setIsAdding(false);
     } catch (error) {
-      console.error("Помилка додавання колонки:", error);
       alert(`Помилка: ${error.message}`);
     }
   };
