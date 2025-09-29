@@ -1,9 +1,10 @@
 // src/components/auth/LoginForm.jsx
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../utils/firebase/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../../../utils/firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Message } from "./LoginForm.styles";
+import ButtonLoginWithGoogle from "./../../ui/button/ButtonLoginWithGoogle";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,23 @@ export default function LoginForm() {
 
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
+      if (!userCred.user.emailVerified) {
+        setMsg("Будь ласка, підтвердіть email перед входом.");
+        return;
+      }
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+      setMsg(error.message);
+    }
+  };
+
+  const handleLoginWithGoogle = async (e) => {
+    setMsg("");
+
+    try {
+      const userCred = await signInWithPopup(auth, googleProvider);
       if (!userCred.user.emailVerified) {
         setMsg("Будь ласка, підтвердіть email перед входом.");
         return;
@@ -49,6 +67,8 @@ export default function LoginForm() {
       />
 
       <Button type="submit">Login</Button>
+
+      <ButtonLoginWithGoogle type="button" onClick={handleLoginWithGoogle}>Login with Google</ButtonLoginWithGoogle>
       {msg && <Message>{msg}</Message>}
     </Form>
   );

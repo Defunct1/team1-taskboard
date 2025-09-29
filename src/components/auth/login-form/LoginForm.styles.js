@@ -30,6 +30,20 @@ export const Button = styled.button`
   }
 `;
 
+export const ButtonLoginWithGoogle = styled.button`
+  padding: 10px;
+  background-color: #ffffffff;
+  border: 1px solid #979797ff;
+  border-radius: 6px;
+  color: gray;
+  font-size: 16px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #b6bbb8ff;
+  }
+`;
+
 export const Message = styled.p`
   color: red;
   text-align: center;
